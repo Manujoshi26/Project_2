@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Image Slider</title>
+    <style>
+        /* Full page background */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://images.pexels.com/photos/2211803/pexels-photo-2211803.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Main slider container */
+        .slider-container {
+            position: relative;
+            width: 80%;
+            max-width: 900px;
+            margin: 20px;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        }
+
+        /* Container for images */
+        .slider-images {
+            display: flex;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slider-images img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slider-images img.active {
+            opacity: 1;
+        }
+
+        /* Captions for each image */
+        .caption {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .slider-container:hover .caption {
+            display: block;
+        }
+
+        /* Navigation buttons */
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 30px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Thumbnail navigation */
+        .thumbnail-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .thumbnail-nav img {
+            width: 50px;
+            margin: 0 5px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            border-radius: 5px;
+        }
+
+        .thumbnail-nav img:hover {
+            opacity: 1;
+        }
+
+        .active-thumbnail {
+            border: 2px solid #007BFF;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .slider-container {
+                width: 90%;
+            }
+
+            .nav-button {
+                font-size: 24px;
+            }
+
+            .caption {
+                font-size: 18px;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slider-container">
+    <div class="slider-images">
+        <div class="slide">
+            <img src="https://images.pexels.com/photos/1181676/pexels-photo-1181676.jpeg" alt="Image 1" class="active">
+            <div class="caption">Serene Mountain Landscape</div>
+        </div>
+        <div class="slide">
+            <img src="https://images.pexels.com/photos/2236706/pexels-photo-2236706.jpeg" alt="Image 2">
+            <div class="caption">A Peaceful Forest Path</div>
+        </div>
+        <div class="slide">
+            <img src="https://images.pexels.com/photos/1181575/pexels-photo-1181575.jpeg" alt="Image 3">
+            <div class="caption">Sunset Over Calm Waters</div>
+        </div>
+    </div>
+
+    <div class="slider-nav">
+        <button class="nav-button" id="prevBtn">&#10094;</button>
+        <button class="nav-button" id="nextBtn">&#10095;</button>
+    </div>
+
+    <div class="thumbnail-nav">
+        <img src="https://images.pexels.com/photos/1181676/pexels-photo-1181676.jpeg" alt="Thumbnail 1" class="thumbnail" data-index="0">
+        <img src="https://images.pexels.com/photos/2236706/pexels-photo-2236706.jpeg" alt="Thumbnail 2" class="thumbnail" data-index="1">
+        <img src="https://images.pexels.com/photos/1181575/pexels-photo-1181575.jpeg" alt="Thumbnail 3" class="thumbnail" data-index="2">
+    </div>
+</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide img');
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+
+    const sliderImages = document.querySelector('.slider-images');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    
+    // Function to update slider based on the current index
+    function updateSlider() {
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === currentIndex) {
+                slide.classList.add('active');
+            }
+        });
+
+        thumbnails.forEach((thumb, index) => {
+            thumb.classList.remove('active-thumbnail');
+            if (index === currentIndex) {
+                thumb.classList.add('active-thumbnail');
+            }
+        });
+    }
+
+    // Show the previous slide
+    prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex === 0) ? totalSlides - 1 : currentIndex - 1;
+        updateSlider();
+    });
+
+    // Show the next slide
+    nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex === totalSlides - 1) ? 0 : currentIndex + 1;
+        updateSlider();
+    });
+
+    // Show the slide corresponding to the clicked thumbnail
+    thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener('click', () => {
+            currentIndex = index;
+            updateSlider();
+        });
+    });
+
+    // Initialize the slider
+    updateSlider();
+
+    // Optional: Add swipe support for mobile (touch events)
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    sliderImages.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+
+    sliderImages.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) {
+            nextBtn.click();
+        } else if (touchEndX - touchStartX > 50) {
+            prevBtn.click();
+        }
+    });
+
+    // Keyboard navigation (left and right arrows)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevBtn.click();
+        } else if (e.key === 'ArrowRight') {
+            nextBtn.click();
+        }
+    });
+</script>
+
+</body>
+</html>
